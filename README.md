@@ -3,62 +3,60 @@
 ### Building a Three-Node Kubernetes Cluster Using Docker Desktop and kind
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Kubernetes-Container%20Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white">
-  <img src="https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-  <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white">
-  <img src="https://img.shields.io/badge/NGINX-Web%20Server-009639?style=for-the-badge&logo=nginx&logoColor=white">
+  <img src="https://img.shields.io/badge/Kubernetes-Container%20Orchestration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-Containerization-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/kind-Local%20Cluster-4285F4?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/NGINX-Web%20Server-009639?style=for-the-badge&logo=nginx&logoColor=white" />
 </p>
 
 ---
 
 ## 1. Project Overview
 
-This project demonstrates the implementation of a local Kubernetes cluster on a Windows machine using Docker Desktop and kind (Kubernetes IN Docker).
+This project demonstrates the creation and management of a multi-node Kubernetes cluster on a Windows machine using **Docker Desktop and kind (Kubernetes IN Docker)**.
 
-A three-node Kubernetes cluster is created, consisting of one Control Plane node and two Worker nodes. An NGINX web server is deployed inside the cluster using Kubernetes Deployments.
+A three-node Kubernetes cluster is created, consisting of one Control Plane node and two Worker nodes.
 
-The experiment demonstrates how Kubernetes manages containerized applications through deployment, horizontal scaling, and automatic recovery of deleted Pods.
+An NGINX web application is deployed inside the cluster using Kubernetes Deployments. The experiment further demonstrates application scaling from three to six replicas and Kubernetes self-healing by deleting a running Pod and observing its automatic replacement.
 
-The complete implementation is performed locally without requiring cloud infrastructure or multiple physical machines.
+The entire implementation is performed locally without requiring cloud infrastructure or multiple physical machines.
 
 ## 2. Objectives
 
-The primary objectives of this experiment are:
-
 * Understand Kubernetes architecture and container orchestration.
-* Create a multi-node Kubernetes cluster using kind.
+* Create a three-node Kubernetes cluster using kind.
 * Understand the roles of Control Plane and Worker nodes.
 * Deploy an NGINX application using Kubernetes Deployments.
 * Monitor Pods and their distribution across Worker nodes.
-* Demonstrate horizontal scaling by increasing replicas from 3 to 6.
-* Demonstrate Kubernetes self-healing by deleting a Pod and observing its automatic replacement.
+* Perform horizontal scaling from three to six replicas.
+* Demonstrate Kubernetes self-healing through automatic Pod replacement.
 * Understand how Docker containers are used to run Kubernetes nodes.
 
 ## 3. Technologies Used
 
-| Technology     | Purpose                                       |
-| -------------- | --------------------------------------------- |
-| Windows 10/11  | Host operating system                         |
-| WSL 2          | Linux environment for Docker Desktop          |
-| Docker Desktop | Container runtime environment                 |
-| Kubernetes     | Container orchestration platform              |
-| kind           | Creates a local multi-node Kubernetes cluster |
-| kubectl        | Command-line interface for Kubernetes         |
-| NGINX          | Web server deployed inside Kubernetes         |
-| YAML           | Cluster configuration                         |
+| Technology     | Purpose                               |
+| :------------- | :------------------------------------ |
+| Windows 10/11  | Host operating system                 |
+| WSL 2          | Linux environment for Docker Desktop  |
+| Docker Desktop | Container runtime environment         |
+| Kubernetes     | Container orchestration platform      |
+| kind           | Creates a local Kubernetes cluster    |
+| kubectl        | Command-line tool for Kubernetes      |
+| NGINX          | Web server deployed inside Kubernetes |
+| YAML           | Cluster configuration                 |
 
-## 4. System Architecture
+## 4. Kubernetes Architecture
 
 The experiment uses a three-node Kubernetes cluster.
 
-### Cluster Architecture
+### Architecture Diagram
 
 ```mermaid
 flowchart TB
     A["Windows Laptop"] --> B["Docker Desktop (WSL 2)"]
     B --> C["kind Kubernetes Cluster"]
 
-    C --> D["Control Plane Node"]
+    C --> D["Control Plane"]
     C --> E["Worker Node 1"]
     C --> F["Worker Node 2"]
 
@@ -70,32 +68,32 @@ flowchart TB
     E --> K["NGINX Pods"]
     F --> L["NGINX Pods"]
 
-    style A fill:#eeeeee,stroke:#555,color:#222
-    style B fill:#2496ED,stroke:#1673B8,color:#fff
-    style C fill:#326CE5,stroke:#1D4ED8,color:#fff
-    style D fill:#7B1E3A,stroke:#581329,color:#fff
-    style E fill:#198754,stroke:#12663F,color:#fff
-    style F fill:#198754,stroke:#12663F,color:#fff
+    style A fill:#172554,color:#fff,stroke:#60A5FA
+    style B fill:#1D4ED8,color:#fff,stroke:#60A5FA
+    style C fill:#312E81,color:#fff,stroke:#818CF8
+    style D fill:#7F1D1D,color:#fff,stroke:#F87171
+    style E fill:#166534,color:#fff,stroke:#4ADE80
+    style F fill:#166534,color:#fff,stroke:#4ADE80
 ```
 
 ### Node Configuration
 
 | Node               | Role          | Responsibility                 |
-| ------------------ | ------------- | ------------------------------ |
+| :----------------- | :------------ | :----------------------------- |
 | kind-control-plane | Control Plane | Manages the Kubernetes cluster |
-| kind-worker        | Worker        | Runs application workloads     |
-| kind-worker2       | Worker        | Runs application workloads     |
+| kind-worker        | Worker        | Executes application workloads |
+| kind-worker2       | Worker        | Executes application workloads |
 
-All three Kubernetes nodes run as Docker containers on the local Windows machine.
+All three nodes run as Docker containers on the local Windows machine.
 
 ### Control Plane Components
 
-| Component          | Description                                                    |
-| ------------------ | -------------------------------------------------------------- |
-| API Server         | Handles communication between Kubernetes components and users. |
-| Scheduler          | Selects suitable nodes for newly created Pods.                 |
-| Controller Manager | Maintains the desired state of the cluster.                    |
-| etcd               | Stores Kubernetes cluster configuration and state.             |
+| Component          | Function                               |
+| :----------------- | :------------------------------------- |
+| API Server         | Handles communication and API requests |
+| Scheduler          | Assigns Pods to suitable nodes         |
+| Controller Manager | Maintains the desired cluster state    |
+| etcd               | Stores Kubernetes cluster data         |
 
 ## 5. Project Structure
 
@@ -107,22 +105,22 @@ Kubernetes-Cluster-Lab/
 ├── kind-config.yaml
 │
 └── results/
-    ├── cluster-creation.png
-    ├── nodes-status.png
-    ├── nginx-deployment.png
-    ├── scaling.png
-    └── self-healing.png
+    │
+    ├── 01-docker-version.png
+    ├── 02-docker-hello-world.png
+    ├── 03-cluster-creation.png
+    ├── 04-cluster-nodes.png
+    ├── 05-docker-containers.png
+    ├── 06-kubernetes-system-pods.png
+    ├── 07-nginx-deployment.png
+    ├── 08-nginx-pods.png
+    ├── 09-scaling-to-six.png
+    └── 10-self-healing.png
 ```
-
-### File Description
-
-* **README.md:** Project documentation, architecture, implementation, and results.
-* **kind-config.yaml:** Defines the three-node Kubernetes cluster.
-* **results/:** Contains screenshots demonstrating the successful execution of the experiment.
 
 ## 6. Cluster Configuration
 
-The Kubernetes cluster is configured using a YAML file named `kind-config.yaml`.
+The cluster is configured using `kind-config.yaml`.
 
 ### Configuration File
 
@@ -138,19 +136,19 @@ nodes:
 
 ### Configuration Explanation
 
-| Parameter     | Description                                   |
-| ------------- | --------------------------------------------- |
-| kind          | Defines the resource type as Cluster.         |
-| apiVersion    | Specifies the kind configuration API version. |
-| control-plane | Creates one Control Plane node.               |
-| worker        | Creates the first Worker node.                |
-| worker        | Creates the second Worker node.               |
+| Parameter     | Description                                  |
+| :------------ | :------------------------------------------- |
+| kind: Cluster | Defines the resource type                    |
+| apiVersion    | Specifies the kind configuration API version |
+| control-plane | Creates one Control Plane node               |
+| worker        | Creates the first Worker node                |
+| worker        | Creates the second Worker node               |
 
-This configuration instructs kind to create a Kubernetes cluster containing three nodes.
+This configuration instructs kind to create a Kubernetes cluster with one Control Plane and two Worker nodes.
 
 ## 7. Implementation Workflow
 
-The experiment is divided into six major parts.
+The experiment is performed in the following stages.
 
 ### Part 1: Installation of Required Tools
 
@@ -165,7 +163,7 @@ Docker Desktop is configured to use the WSL 2 backend.
 
 ### Part 2: Verification of Tools
 
-The installations are verified using the following commands:
+The installations are verified using:
 
 ```powershell
 docker version
@@ -176,11 +174,11 @@ kind version
 
 These commands verify Docker functionality and the availability of kubectl and kind.
 
-### Part 3: Creating Cluster Configuration
+### Part 3: Creating the Cluster Configuration
 
 A project directory is created, and the `kind-config.yaml` file is added.
 
-The configuration defines one Control Plane and two Worker nodes.
+The configuration specifies one Control Plane and two Worker nodes.
 
 ### Part 4: Creating the Kubernetes Cluster
 
@@ -192,7 +190,7 @@ kind create cluster --config kind-config.yaml
 
 kind reads the YAML configuration and creates three Docker containers representing the Kubernetes nodes.
 
-The Worker nodes then join the Control Plane to form the cluster.
+The Worker nodes join the Control Plane to form the cluster.
 
 Cluster connectivity is verified using:
 
@@ -206,7 +204,7 @@ Node status is checked using:
 kubectl get nodes
 ```
 
-### Part 5: Deploying NGINX
+### Part 5: Deploying the NGINX Application
 
 An NGINX Deployment is created with three replicas.
 
@@ -228,21 +226,27 @@ Check the Pods:
 kubectl get pods -o wide
 ```
 
-The output displays the Pod names, status, IP addresses, and the nodes on which they are running.
+The output displays Pod names, status, IP addresses, and node assignments.
 
 ### Part 6: Scaling and Self-Healing
 
 #### A. Horizontal Scaling
 
-The application is initially deployed with three replicas.
+Initially, the NGINX application runs with three replicas.
 
-To increase the number of replicas to six:
+The number of replicas is increased to six using:
 
 ```powershell
 kubectl scale deployment web --replicas=6
 ```
 
-Verify the Pods:
+Verify the Deployment:
+
+```powershell
+kubectl get deployments
+```
+
+Check the Pods:
 
 ```powershell
 kubectl get pods -o wide
@@ -260,7 +264,7 @@ First, list the Pods:
 kubectl get pods
 ```
 
-Delete one Pod:
+Delete a selected Pod:
 
 ```powershell
 kubectl delete pod <pod-name>
@@ -278,59 +282,90 @@ Kubernetes automatically creates a replacement Pod.
 
 The Deployment eventually returns to six running replicas.
 
-This demonstrates Kubernetes self-healing.
+This demonstrates the self-healing capability of Kubernetes.
 
 ## 8. Execution Results and Screenshots
 
-The following screenshots provide evidence of the experiment.
+The following screenshots provide evidence of the practical implementation.
 
-### 8.1 Cluster Creation
+### 8.1 Docker Version Verification
 
-Shows the successful creation of the Kubernetes cluster using kind.
+Verifies successful installation of Docker Client and Docker Server.
 
-![Cluster Creation](results/cluster-creation.png)
+![Docker Version](results/01-docker-version.png)
 
-### 8.2 Kubernetes Node Status
+### 8.2 Docker Hello World
 
-Displays the three Kubernetes nodes with their Ready status.
+Demonstrates that Docker can successfully download an image, create a container, and execute it.
 
-![Kubernetes Nodes](results/nodes-status.png)
+![Docker Hello World](results/02-docker-hello-world.png)
 
-### 8.3 NGINX Deployment
+### 8.3 Kubernetes Cluster Creation
 
-Shows the successful creation of the NGINX Deployment.
+Shows the successful creation of the three-node Kubernetes cluster using kind.
 
-![NGINX Deployment](results/nginx-deployment.png)
+![Cluster Creation](results/03-cluster-creation.png)
 
-### 8.4 Horizontal Scaling
+### 8.4 Kubernetes Node Status
 
-Demonstrates the increase in NGINX Pods from three to six.
+Displays the Control Plane and two Worker nodes with their Ready status.
 
-![Scaling](results/scaling.png)
+![Cluster Nodes](results/04-cluster-nodes.png)
 
-### 8.5 Self-Healing
+### 8.5 Docker Containers
 
-Shows Kubernetes automatically replacing a manually deleted Pod.
+Shows the three running Docker containers representing the Kubernetes nodes.
 
-![Self Healing](results/self-healing.png)
+![Docker Containers](results/05-docker-containers.png)
+
+### 8.6 Kubernetes System Pods
+
+Displays Kubernetes system components such as CoreDNS, etcd, API Server, Scheduler, Controller Manager, and kube-proxy.
+
+![System Pods](results/06-kubernetes-system-pods.png)
+
+### 8.7 NGINX Deployment
+
+Shows the successful creation of the NGINX Deployment with three replicas.
+
+![NGINX Deployment](results/07-nginx-deployment.png)
+
+### 8.8 NGINX Pods
+
+Displays the three running NGINX Pods along with their IP addresses and Worker node assignments.
+
+![NGINX Pods](results/08-nginx-pods.png)
+
+### 8.9 Horizontal Scaling
+
+Demonstrates the successful increase in NGINX replicas from three to six.
+
+![Scaling to Six](results/09-scaling-to-six.png)
+
+### 8.10 Self-Healing Demonstration
+
+Shows the deletion of a running Pod and the automatic creation of a replacement Pod by Kubernetes.
+
+![Self Healing](results/10-self-healing.png)
 
 ## 9. Important Kubernetes Commands
 
-| Command                                         | Description                               |
-| ----------------------------------------------- | ----------------------------------------- |
-| `docker version`                                | Checks Docker installation.               |
-| `docker ps`                                     | Lists running Docker containers.          |
-| `kind version`                                  | Displays kind version.                    |
-| `kubectl version --client`                      | Displays kubectl version.                 |
-| `kind create cluster --config kind-config.yaml` | Creates the Kubernetes cluster.           |
-| `kubectl cluster-info`                          | Displays cluster information.             |
-| `kubectl get nodes`                             | Lists cluster nodes.                      |
-| `kubectl get pods -n kube-system`               | Lists Kubernetes system Pods.             |
-| `kubectl get deployments`                       | Lists Deployments.                        |
-| `kubectl get pods -o wide`                      | Displays Pods and their node assignments. |
-| `kubectl scale deployment web --replicas=6`     | Scales the application to six replicas.   |
-| `kubectl delete pod <pod-name>`                 | Deletes a selected Pod.                   |
-| `kubectl get pods -w`                           | Continuously monitors Pod changes.        |
+| Command                                         | Description                            |
+| :---------------------------------------------- | :------------------------------------- |
+| `docker version`                                | Checks Docker installation             |
+| `docker run hello-world`                        | Tests Docker container execution       |
+| `docker ps`                                     | Lists running Docker containers        |
+| `kind version`                                  | Displays kind version                  |
+| `kubectl version --client`                      | Displays kubectl version               |
+| `kind create cluster --config kind-config.yaml` | Creates the Kubernetes cluster         |
+| `kubectl cluster-info`                          | Displays cluster information           |
+| `kubectl get nodes`                             | Lists Kubernetes nodes                 |
+| `kubectl get pods -n kube-system -o wide`       | Lists system Pods                      |
+| `kubectl get deployments`                       | Lists Deployments                      |
+| `kubectl get pods -o wide`                      | Displays Pods and node assignments     |
+| `kubectl scale deployment web --replicas=6`     | Scales the application to six replicas |
+| `kubectl delete pod <pod-name>`                 | Deletes a selected Pod                 |
+| `kubectl get pods -w`                           | Continuously monitors Pod changes      |
 
 ## 10. Key Learnings
 
@@ -350,15 +385,18 @@ Through this experiment, the following concepts were understood:
 
 This experiment successfully demonstrates the fundamental capabilities of Kubernetes for container orchestration.
 
-A three-node Kubernetes cluster is configured locally using Docker Desktop and kind. An NGINX application is deployed with three replicas and subsequently scaled to six replicas.
+A three-node Kubernetes cluster was created locally using Docker Desktop and kind. An NGINX application was deployed with three replicas and subsequently scaled to six replicas.
 
-The self-healing capability is demonstrated by manually deleting a Pod and observing Kubernetes automatically create a replacement.
+The self-healing capability was demonstrated by manually deleting a running Pod and observing Kubernetes automatically create a replacement.
 
-Overall, this experiment provides practical understanding of Kubernetes architecture, application deployment, horizontal scaling, and automated workload management.
+Overall, this experiment provides practical understanding of Kubernetes architecture, container management, application deployment, horizontal scaling, and automated workload recovery.
 
 ---
 
 <p align="center">
-  <b>Kubernetes Cluster Lab</b><br>
+  <b>KUBERNETES CLUSTER LAB</b>
+  <br>
   Container Orchestration | Horizontal Scaling | Self-Healing
+  <br><br>
+  <i>Implemented on Windows using Docker Desktop and kind.</i>
 </p>
